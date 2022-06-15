@@ -1,25 +1,35 @@
 #include "philosophers.h"
 
-size_t gettime()
-{
-	struct timeval time;
-	size_t time_ms;
+// size_t gettime()
+// {
+// 	struct timeval time;
+// 	long time_usec;
 
-	gettimeofday(&time, NULL);
-	time_ms = (time.tv_sec * 1000) + (time.tv_usec / 1000);
-	return (time_ms);
+// 	gettimeofday(&time, NULL);
+// 	time_usec = (time.tv_sec * 1000000) + (time.tv_usec / 1000);
+// 	return (time_usec);
+// }
+long	gettime(void)
+{
+	struct timeval	current_time;
+
+	gettimeofday(&current_time, NULL);
+	return ((current_time.tv_usec + current_time.tv_sec * 1000000));
 }
 void sleepi(unsigned long t_sleep)
 {
-	// size_t s_time;
-	// s_time = gettime();
-	usleep(t_sleep);
+	unsigned long	start_time;
 
+	start_time = gettime();
+	usleep(t_sleep - 100);
+	while (((gettime() - start_time) / 1000) < t_sleep);
 }
 
 void    take_a_fork(t_philo *philo)
 {
+	// printf("hey from thread %d\n",philo->id - 1);
 	pthread_mutex_lock(&philo->data->fork[philo->id - 1]);
+	printf("hey from thread %d %d\n",philo->id - 1,philo->id  % philo->data->n_philo);
 	print(philo, 0);
 	pthread_mutex_lock(&philo->data->fork[philo->id % philo->data->n_philo]);
 	print(philo, 0);
@@ -27,12 +37,13 @@ void    take_a_fork(t_philo *philo)
 
 void	eating(t_philo *philo)
 {
-	philo->last_meal = gettime();
 	print(philo, 1);
+	philo->last_meal = gettime();
 	sleepi(philo->data->t_eat * 1000);
-	philo->n_meal += 1;
-	pthread_mutex_unlock(&philo->data->fork[philo->id - 1]);
+	philo->num_of_meals += 1;
+	// printf("%d num of meals == %d\n",philo->id, philo->num_of_meals);
 	pthread_mutex_unlock(&philo->data->fork[philo->id % philo->data->n_philo]);
+	pthread_mutex_unlock(&philo->data->fork[philo->id - 1]);
 }
 
 void	sleeping(t_philo *philo)

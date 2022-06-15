@@ -19,16 +19,16 @@ typedef struct s_data
 	int				t_die;
 	int				t_eat;
 	int				t_sleep;
-	int				t_pme;
+	int				n_meals;
 } 	t_data;
 
 typedef struct s_node
 {
 	pthread_t philo;
 	int id;
-	int n_meal;
-	time_t p_time;
-	time_t last_meal;
+	int num_of_meals;
+	long start_philo;
+	long last_meal;
 	t_data		*data;
 } t_philo;
 
@@ -39,11 +39,11 @@ long long	ft_atoi(const char *str);
 int ft_philo(t_data *data, t_philo *philo);
 int	mutex_init(t_data *data);
 void print(t_philo *philo, int i);
-
-size_t gettime();
+long	gettime(void);
 void sleepi(unsigned long t_sleep);
 void    take_a_fork(t_philo *philo);
 void	eating(t_philo *philo);
 void	sleeping(t_philo *philo);
 void	thinking(t_philo *philo);
+int	check_died(t_data *data, t_philo *philo);
 #endif
