@@ -14,20 +14,23 @@ typedef struct s_data
 {
 	pthread_mutex_t *fork;
 	pthread_mutex_t *dead;
+	pthread_mutex_t	*eat;
 	pthread_mutex_t print;
 	int 			n_philo;
 	int				t_die;
 	int				t_eat;
 	int				t_sleep;
 	int				n_meals;
+	long 			start_philo;
+	pthread_t *th;
 } 	t_data;
 
 typedef struct s_node
 {
-	pthread_t philo;
+	// pthread_t philo;
 	int id;
 	int num_of_meals;
-	long start_philo;
+	// long start_philo;
 	long last_meal;
 	t_data		*data;
 } t_philo;
