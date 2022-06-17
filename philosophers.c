@@ -7,7 +7,6 @@ void print(t_philo *philo, int i)
 	// printf("%ld %ld %d\n",gettime(),philo->data->start_philo, philo->id);
 	// printf("philo num = %d\n",philo->id);
 	time = (gettime() - philo->data->start_philo) / 1000;
-
 	// printf("time %ld\n", time);
 	// printf("gettime %ld\n", gettime());
 	// printf("start philo %ld\n", philo->data->start_philo);
@@ -24,13 +23,39 @@ void print(t_philo *philo, int i)
 		printf("%ld %d is died\n", time, philo->id + 1);
 	pthread_mutex_unlock(&philo->data->print);
 }
-
+void	update_status(t_philo *philo)
+{
+	while(1)
+	{
+		if(philo->data->status_fork[philo->id] == 0)
+		{
+			// printf(" -heeey %d\n",philo->id + 1);
+			if(philo->status == 1)
+				pthread_mutex_lock(&philo->data->fork[philo->id]);
+			philo->data->status_fork[philo->id] = 1;
+			// printf("    philo %d taaaken a foork number : %d\n",philo->id + 1,philo->id + 1);
+			break ;
+		}
+	}
+	while(1)
+	{
+		if(philo->data->status_fork[(philo->id + 1) % philo->data->n_philo] == 0)
+		{
+			if(philo->status == 1)
+				pthread_mutex_lock(&philo->data->fork[(philo->id +  1) % philo->data->n_philo]);
+			philo->data->status_fork[(philo->id +  1) % philo->data->n_philo] = 1;
+			// printf("    philo %d taaaken a fork number : %d\n",philo->id + 1,(philo->id + 1) % philo->data->n_philo + 1);
+			break ;
+		}
+	}
+}
 void	*routine(void *philo)
 {
 	t_philo  *ph = (t_philo *)philo;
 	while(1)
 	{
-		// printf("philo num = %d\n",ph->id);
+		// printf("philo num = %d\n",ph->id + 1);
+		update_status(ph);
 		take_a_fork(ph);
 		eating(ph);
 		sleeping(ph);
@@ -50,11 +75,19 @@ int	creat_philo(t_data *data, t_philo *philo)
 	data->start_philo = gettime();
 	while(i < data->n_philo)
 	{
-		philo[i].id = i; 
+		data->status_fork[i] = 0;
+		i++;
+	}
+	i = 0;	
+	while(i < data->n_philo)
+	{
+		philo[i].id = i;
 		// philo[i].start_philo = gettime();
+		// if(philo[i].status = )
 		philo[i].num_of_meals = 0;
 		philo[i].last_meal = gettime();
 		philo[i].data = data;
+		philo[i].status = 0;
 		pthread_create(&data->th[i], NULL, routine, &philo[i]);
 		// printf("id in creation: %d\n", philo[i].id);
 		usleep(100);
@@ -120,6 +153,7 @@ int	mutex_init(t_data *data)
 	i = -1;
 	nbr_of_philo = data->n_philo;
 	data->fork = malloc(sizeof(pthread_mutex_init) * nbr_of_philo);
+	data->status_fork = malloc(sizeof(int) * nbr_of_philo);
 	data->dead = malloc(sizeof(pthread_mutex_init) * nbr_of_philo);
 	data->th = malloc(sizeof(pthread_t) * nbr_of_philo);
 	pthread_mutex_init(&data->print, NULL);

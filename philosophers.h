@@ -22,6 +22,7 @@ typedef struct s_data
 	int				t_sleep;
 	int				n_meals;
 	long 			start_philo;
+	int				*status_fork;
 	pthread_t *th;
 } 	t_data;
 
@@ -33,6 +34,7 @@ typedef struct s_node
 	// long start_philo;
 	long last_meal;
 	t_data		*data;
+	int status; // 0 first time | 1 take a fork | 2 need to eat | 3 need to sleep
 } t_philo;
 
 
@@ -44,7 +46,7 @@ int	mutex_init(t_data *data);
 void print(t_philo *philo, int i);
 long	gettime(void);
 void sleepi(unsigned long t_sleep);
-void    take_a_fork(t_philo *philo);
+void   take_a_fork(t_philo *philo);
 void	eating(t_philo *philo);
 void	sleeping(t_philo *philo);
 void	thinking(t_philo *philo);
