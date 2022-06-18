@@ -23,6 +23,7 @@ typedef struct s_data
 	int				n_meals;
 	long 			start_philo;
 	int				*status_fork;
+	int status;
 	pthread_t *th;
 } 	t_data;
 
@@ -31,7 +32,7 @@ typedef struct s_node
 	// pthread_t philo;
 	int id;
 	int num_of_meals;
-	// long start_philo;
+	long start_philo;
 	long last_meal;
 	t_data		*data;
 	int status; // 0 first time | 1 take a fork | 2 need to eat | 3 need to sleep
