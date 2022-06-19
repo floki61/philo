@@ -1,2 +1,0 @@
-# philo
-nothing to read

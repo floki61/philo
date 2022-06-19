@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tools.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: oel-berh <oel-berh@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/06/19 00:00:56 by oel-berh          #+#    #+#             */
+/*   Updated: 2022/06/19 03:58:47 by oel-berh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosophers.h"
 
-static int	ft_isdigit(int c)
+int	ft_isdigit(int c)
 {
 	if (c >= '0' && c <= '9')
 		return (1);
@@ -21,32 +33,31 @@ long long	ft_atoi(const char *str)
 	}
 	return (result);
 }
-int ft_strlen(char *str)
+
+int	ft_strlen(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while(str[i])
+	while (str[i])
 		i++;
 	return (i);
 }
 
-int	check_arg(char *argv[])
+long	gettime(void)
 {
-	int	i;
-	int	n;
+	struct timeval	current_time;
 
-	i = 1;
-	while (argv[i])
-	{
-		n = 0;
-		while (ft_strlen(argv[i]) > n)
-		{
-			if (!ft_isdigit(argv[i][n]))
-				return (1);
-			n++;
-		}
-		i++;
-	}
-	return (0);
+	gettimeofday(&current_time, NULL);
+	return ((current_time.tv_usec + current_time.tv_sec * 1000000));
+}
+
+void	sleepi(unsigned long t_sleep)
+{
+	unsigned long	start_time;
+
+	start_time = gettime();
+	usleep(t_sleep - 10000);
+	while (((gettime() - start_time)) < t_sleep)
+		;
 }
